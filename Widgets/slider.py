@@ -7,6 +7,8 @@ class Sliders(QWidget):
         super().__init__()
 
         self.volumeslider: QSlider = QSlider(Qt.Horizontal)
+        
+        self.volumeslider.setFixedWidth(100)
         self.volumeslider.setMinimum(0)
         self.volumeslider.setMaximum(100)
         self.volumeslider.setValue(40)

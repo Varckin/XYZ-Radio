@@ -2,14 +2,15 @@ from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtGui import QIcon, QScreen
 from PyQt5.QtCore import QPoint, QRect
 
-from Widgets.layout import AboutLayouts
+from Widgets.layout import AddStationLayout
 
 
-class AboutWindow(QWidget):
+class AddStationWindow(QWidget):
     def __init__(self) -> None:
         super().__init__()
-        self.mainLayout: AboutLayouts = AboutLayouts()
-        self.setLayout(self.mainLayout.hBox)
+        self.mainLayout: AddStationLayout = AddStationLayout()
+
+        self.setLayout(self.mainLayout.vBox)
         self.centerWindow()
         self.setFixedSize(460, 140)
         self.setWindowTitle("XYZ RADIO")
