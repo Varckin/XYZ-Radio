@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtGui import QIcon, QScreen
 from PyQt5.QtCore import QPoint, QRect
 
-from Widgets.layout import AboutLayouts
+from Widgets.aboutWindowWidget import AboutLayouts
 
 
 class AboutWindow(QWidget):
@@ -21,3 +21,9 @@ class AboutWindow(QWidget):
         framegeometry: QRect = self.frameGeometry()
         framegeometry.moveCenter(centerPoint)
         self.move(framegeometry.topLeft())
+
+    def showWindow(self) -> None:
+        if self.isVisible():
+            self.activateWindow()
+        else:
+            self.show()
