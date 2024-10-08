@@ -1,11 +1,19 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QComboBox, QPushButton, QSlider
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
+import time
+
+from Player.player import VlcPlayer, GetData
 
 
 class MainLayouts(QWidget):
     def __init__(self) -> None:
         super().__init__()
+        self.countTimer: int = 0
+        self.timerInterval: int = 1000
+        self.timerFlag: bool = False
 
+        self.player: VlcPlayer = VlcPlayer(url="wer")
+        self.getData: GetData = GetData(player=self.player, widget=self)
         self.mainGridLayout: QGridLayout = QGridLayout()
         self.mainGridLayout.setSpacing(2)
         self.widget_filling()
@@ -32,6 +40,8 @@ class MainLayouts(QWidget):
         self.label_NameMusic: QLabel = QLabel("")
         self.label_Time_stopwatch: QLabel = QLabel("00:00")
 
+        self.timer: QTimer = QTimer()
+
         self.comboBox_Name_Station: QComboBox = QComboBox()
 
         self.btn_Delete_Station: QPushButton = QPushButton("Delete station")
@@ -48,3 +58,24 @@ class MainLayouts(QWidget):
         self.volumeslider.setMinimum(0)
         self.volumeslider.setMaximum(100)
         self.volumeslider.setValue(40)
+        self.volumeslider.setToolTip(f"Volume 40")
+
+        self.timer.timeout.connect(self.timer_second)
+        self.timer.setInterval(self.timerInterval)
+
+        self.volumeslider.valueChanged.connect(self.updateVolume)
+        self.btn_Stop_or_Start_Playback.clicked.connect(self.start_or_stop_listen)
+
+    def updateVolume(self) -> None:
+        self.player.vlcPlayer.audio_set_volume(self.volumeslider.value())
+        self.volumeslider.setToolTip(f"Volume {str(self.player.vlcPlayer.audio_get_volume())}")
+
+    def start_or_stop_listen(self) -> None:
+        if self.player.vlcPlayer.is_playing():
+            self.player.vlcPlayer.pause()
+
+
+    def timer_second(self) -> None:
+        if self.timerFlag:
+            self.countTimer += 1
+        self.label_Time_stopwatch.setText(time.strftime('%H:%M:%S', time.gmtime(self.countTimer)))
