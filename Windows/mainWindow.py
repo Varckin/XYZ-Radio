@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
         self.centralWidget: QWidget = QWidget()
         self.mainLayout: MainLayouts = MainLayouts()
         self.aboutWindow: AboutWindow = AboutWindow()
-        self.addStationWindow: AddStationWindow = AddStationWindow()
+        self.addStationWindow: AddStationWindow = AddStationWindow(mainLayouts=self.mainLayout)
 
         self.setupWindow()
         self.activity()

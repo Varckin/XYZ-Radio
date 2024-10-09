@@ -1,14 +1,17 @@
 from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtGui import QIcon, QScreen
 from PyQt5.QtCore import QPoint, QRect
-
 from Widgets.addStationWindowWidget import AddStationLayout
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from Windows.mainWindow import MainLayouts
 
 
 class AddStationWindow(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, mainLayouts: 'MainLayouts') -> None:
         super().__init__()
-        self.mainLayout: AddStationLayout = AddStationLayout()
+        self.mainLayout: AddStationLayout = AddStationLayout(window=self, mainLayouts=mainLayouts)
 
         self.setLayout(self.mainLayout.vBox)
         self.centerWindow()

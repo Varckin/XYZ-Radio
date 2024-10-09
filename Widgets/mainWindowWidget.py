@@ -1,8 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QComboBox, QPushButton, QSlider
 from PyQt5.QtCore import Qt, QTimer
 import time
+import atexit
 
 from Player.player import VlcPlayer, GetData
+from DataBase.dataBase import DataBase
 
 
 class MainLayouts(QWidget):
@@ -12,13 +14,17 @@ class MainLayouts(QWidget):
         self.timerInterval: int = 1000
         self.timerFlag: bool = False
 
-        self.player: VlcPlayer = VlcPlayer(url="wer")
+        self.player: VlcPlayer = VlcPlayer()
         self.getData: GetData = GetData(player=self.player, widget=self)
+        self.dataBase: DataBase = DataBase()
+        self.dataBase.createConnection()
         self.mainGridLayout: QGridLayout = QGridLayout()
         self.mainGridLayout.setSpacing(2)
         self.widget_filling()
         self.widgets_setup()
         self.mainGridLayout_filling()
+
+        atexit.register(self.dataBase.closeConnect)
 
     def mainGridLayout_filling(self) -> None:
         self.mainGridLayout.addWidget(self.label_empty, 0, 0)
@@ -58,24 +64,66 @@ class MainLayouts(QWidget):
         self.volumeslider.setMinimum(0)
         self.volumeslider.setMaximum(100)
         self.volumeslider.setValue(40)
-        self.volumeslider.setToolTip(f"Volume 40")
+        self.volumeslider.setToolTip(f"Volume {str(self.volumeslider.value())}")
+
+        self.fillingComboBox()
 
         self.timer.timeout.connect(self.timer_second)
         self.timer.setInterval(self.timerInterval)
 
         self.volumeslider.valueChanged.connect(self.updateVolume)
         self.btn_Stop_or_Start_Playback.clicked.connect(self.start_or_stop_listen)
+        self.btn_Delete_Station.clicked.connect(self.deleteStation)
 
     def updateVolume(self) -> None:
-        self.player.vlcPlayer.audio_set_volume(self.volumeslider.value())
-        self.volumeslider.setToolTip(f"Volume {str(self.player.vlcPlayer.audio_get_volume())}")
+        volume: int = self.volumeslider.value()
+        self.player.vlcPlayer.audio_set_volume(volume)
+        self.volumeslider.setToolTip(f"Volume {str(volume)}")
 
     def start_or_stop_listen(self) -> None:
         if self.player.vlcPlayer.is_playing():
+            self.stopPlayingStation()
+        else:
+            self.startPlayingStation()
+
+    def stopPlayingStation(self) -> None:
+        nameStation: str = self.comboBox_Name_Station.currentText()
+        linkStation: str = self.dataBase.getLinkStation(nameStation)
+        if self.player.isCurrentPlaying(url=linkStation):
             self.player.vlcPlayer.pause()
+            self.getData.terminate()
+            self.timerFlag = False
+            self.timer.stop()
+            self.countTimer: int = 0
+            self.label_Time_stopwatch.setText(time.strftime('%H:%M:%S', time.gmtime(self.countTimer)))
+            self.btn_Stop_or_Start_Playback.setText("Start")
 
+    def startPlayingStation(self) -> None:
+        nameStation: str = self.comboBox_Name_Station.currentText()
+        linkStation: str = self.dataBase.getLinkStation(nameStation)
+        if self.player.currentPlayingStation(linkStation):
+            self.getData.start()
+            self.timerFlag = True
+            self.timer.start()
+            self.btn_Stop_or_Start_Playback.setText("Stop")
+        else:
+            self.label_NameMusic.setText("Error")
+            self.timer.singleShot(1000, self.clearLabel)
+    
+    def clearLabel(self):
+        self.label_NameMusic.setText("")
 
+    def fillingComboBox(self) -> None:
+        self.comboBox_Name_Station.clear()
+        for i in self.dataBase.getListNameStation():
+            self.comboBox_Name_Station.addItem(i)
+    
     def timer_second(self) -> None:
         if self.timerFlag:
             self.countTimer += 1
         self.label_Time_stopwatch.setText(time.strftime('%H:%M:%S', time.gmtime(self.countTimer)))
+
+    def deleteStation(self) -> None:
+        nameStation: str = self.comboBox_Name_Station.currentText()
+        self.dataBase.delStation(name=nameStation)
+        self.fillingComboBox()

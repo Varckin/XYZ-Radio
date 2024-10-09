@@ -14,5 +14,6 @@ class AboutLayouts(QWidget):
         self.label_about: QLabel = QLabel("")
 
         self.hBox: QHBoxLayout = QHBoxLayout()
+
     def widgets_setup(self) -> None:
         pass
