@@ -73,6 +73,7 @@ class SystemTray:
         self.window: MainWindow = window
         self.systemTray: QSystemTrayIcon = QSystemTrayIcon()
         self.systemTray.setIcon(QIcon(self.window.logo))
+        self.systemTray.setToolTip(getStr("NameApp"))
 
         self.setupTray()
 
