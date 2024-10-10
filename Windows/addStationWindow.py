@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QWidget, QApplication
 from PyQt5.QtGui import QIcon, QScreen
 from PyQt5.QtCore import QPoint, QRect
 from Widgets.addStationWindowWidget import AddStationLayout
+from pathlib import Path
+from Localization.getStrLocal import getStr
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -11,13 +13,14 @@ if TYPE_CHECKING:
 class AddStationWindow(QWidget):
     def __init__(self, mainLayouts: 'MainLayouts') -> None:
         super().__init__()
+        self.logo: str = f"{str(Path.cwd())}/Resource/logo.png"
         self.mainLayout: AddStationLayout = AddStationLayout(window=self, mainLayouts=mainLayouts)
 
         self.setLayout(self.mainLayout.vBox)
         self.centerWindow()
         self.setFixedSize(460, 140)
-        self.setWindowTitle("XYZ RADIO")
-        self.setWindowIcon(QIcon(""))
+        self.setWindowTitle(getStr("NameApp"))
+        self.setWindowIcon(QIcon(self.logo))
 
     def centerWindow(self) -> None:
         screen: QScreen = QApplication.primaryScreen()

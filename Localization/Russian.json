@@ -1,0 +1,23 @@
+{
+    "NameApp": "XYZ Radio",
+    "DeleteStation": "Удалить станцию",
+    "AddStation": "Добавить станцию",
+    "StartPlayback": "Запустить",
+    "StopPlayback": "Остановить",
+    "About": "О приложении",
+    "AboutText": "Создатель: Markus Varckin<br>Версия: 2.5<br>Telegram: <a href='https://t.me/varckin'>@Varckin</a>",
+    "Volume": "Громкость {value}",
+    "Delete": "Удалить",
+    "MessageDel": "Вы уверены, что хотите удалить станцию?",
+    "Yes": "Да",
+    "No": "Нет",
+    "NameStation": "Название станции",
+    "LinkStation": "Ссылка на станцию",
+    "Cancel": "Отмена",
+    "Save": "Сохранить",
+    "AppHide": "Приложение свернуто",
+    "MessageHide": "Приложение было свернуто в трей",
+    "Quit": "Выход",
+    "OpenApp": "Открыть приложение",
+    "Error": "Ошибка воспроизведения станции"
+}

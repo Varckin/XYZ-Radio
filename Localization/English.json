@@ -1,0 +1,23 @@
+{
+    "NameApp": "XYZ Radio",
+    "DeleteStation": " Delete Station",
+    "AddStation": "Add Station",
+    "StartPlayback": "Start",
+    "StopPlayback": "Stop",
+    "About": "About",
+    "AboutText": "Creater: Markus Varckin<br>Version: 2.5<br>Telegram: <a href='https://t.me/varckin'>@Varckin</a>",
+    "Volume": "Volume {value}",
+    "Delete": "Delete",
+    "MessageDel": "Are you sure you want to delete the station?",
+    "Yes": "Yes",
+    "No": "No",
+    "NameStation": "Name Station",
+    "LinkStation": "Link Station",
+    "Cancel": "Cancel",
+    "Save": "Save",
+    "AppHide": "App hide",
+    "MessageHide": "The application was minimized to tray",
+    "Quit": "Exit",
+    "OpenApp": "Open App",
+    "Error": "Station playback error"
+}

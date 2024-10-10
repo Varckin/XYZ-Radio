@@ -1,4 +1,5 @@
 import requests
+from pathlib import Path
 
 def isURLValid(url: str) -> bool:
     try:
@@ -7,3 +8,8 @@ def isURLValid(url: str) -> bool:
             return True
     except requests.RequestException:
         return False
+
+def checkFolder(path: str) -> None:
+    folderPath = Path(path)
+    if not folderPath.exists():
+        folderPath.mkdir(parents=True, exist_ok=True)

@@ -1,10 +1,13 @@
-from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QComboBox, QPushButton, QSlider
+from PyQt5.QtWidgets import QWidget, QMessageBox, QGridLayout, QLabel, QComboBox, QPushButton, QSlider
 from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QIcon
+from pathlib import Path
 import time
 import atexit
 
 from Player.player import VlcPlayer, GetData
 from DataBase.dataBase import DataBase
+from Localization.getStrLocal import getStr
 
 
 class MainLayouts(QWidget):
@@ -50,10 +53,10 @@ class MainLayouts(QWidget):
 
         self.comboBox_Name_Station: QComboBox = QComboBox()
 
-        self.btn_Delete_Station: QPushButton = QPushButton("Delete station")
-        self.btn_Add_Station: QPushButton = QPushButton("Add station")
-        self.btn_Stop_or_Start_Playback: QPushButton = QPushButton("Start")
-        self.btn_About: QPushButton = QPushButton("About")
+        self.btn_Delete_Station: QPushButton = QPushButton(getStr("DeleteStation"))
+        self.btn_Add_Station: QPushButton = QPushButton(getStr("AddStation"))
+        self.btn_Stop_or_Start_Playback: QPushButton = QPushButton(getStr("StartPlayback"))
+        self.btn_About: QPushButton = QPushButton(getStr("About"))
 
         self.volumeslider: QSlider = QSlider(Qt.Horizontal)
     
@@ -64,7 +67,7 @@ class MainLayouts(QWidget):
         self.volumeslider.setMinimum(0)
         self.volumeslider.setMaximum(100)
         self.volumeslider.setValue(40)
-        self.volumeslider.setToolTip(f"Volume {str(self.volumeslider.value())}")
+        self.volumeslider.setToolTip(getStr("Volume").format(value=str(self.volumeslider.value())))
 
         self.fillingComboBox()
 
@@ -78,7 +81,7 @@ class MainLayouts(QWidget):
     def updateVolume(self) -> None:
         volume: int = self.volumeslider.value()
         self.player.vlcPlayer.audio_set_volume(volume)
-        self.volumeslider.setToolTip(f"Volume {str(volume)}")
+        self.volumeslider.setToolTip(getStr("Volume").format(value=str(volume)))
 
     def start_or_stop_listen(self) -> None:
         if self.player.vlcPlayer.is_playing():
@@ -96,7 +99,8 @@ class MainLayouts(QWidget):
             self.timer.stop()
             self.countTimer: int = 0
             self.label_Time_stopwatch.setText(time.strftime('%H:%M:%S', time.gmtime(self.countTimer)))
-            self.btn_Stop_or_Start_Playback.setText("Start")
+            self.btn_Stop_or_Start_Playback.setText(getStr("StartPlayback"))
+            self.label_NameMusic.setText("")
 
     def startPlayingStation(self) -> None:
         nameStation: str = self.comboBox_Name_Station.currentText()
@@ -105,9 +109,9 @@ class MainLayouts(QWidget):
             self.getData.start()
             self.timerFlag = True
             self.timer.start()
-            self.btn_Stop_or_Start_Playback.setText("Stop")
+            self.btn_Stop_or_Start_Playback.setText(getStr("StopPlayback"))
         else:
-            self.label_NameMusic.setText("Error")
+            self.label_NameMusic.setText(getStr("Error"))
             self.timer.singleShot(1000, self.clearLabel)
     
     def clearLabel(self):
@@ -124,6 +128,19 @@ class MainLayouts(QWidget):
         self.label_Time_stopwatch.setText(time.strftime('%H:%M:%S', time.gmtime(self.countTimer)))
 
     def deleteStation(self) -> None:
-        nameStation: str = self.comboBox_Name_Station.currentText()
-        self.dataBase.delStation(name=nameStation)
-        self.fillingComboBox()
+        answer: QMessageBox.StandardButton = self.messageBox()
+        if answer == QMessageBox.Yes:
+            nameStation: str = self.comboBox_Name_Station.currentText()
+            self.dataBase.delStation(name=nameStation)
+            self.fillingComboBox()
+    
+    def messageBox(self) -> QMessageBox.StandardButton:
+        logo: str = f"{str(Path.cwd())}/Resource/logo.png"
+        answer: QMessageBox = QMessageBox(None)
+        answer.setWindowTitle(getStr("Delete"))
+        answer.setText(getStr("MessageDel"))
+        answer.setWindowIcon(QIcon(logo))
+        answer.setStandardButtons(QMessageBox.No | QMessageBox.Yes)
+        answer.setDefaultButton(QMessageBox.No)
+
+        return answer.exec_()

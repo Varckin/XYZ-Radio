@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QPushButton
 from DataBase.dataBase import DataBase
+from Localization.getStrLocal import getStr
 
 if TYPE_CHECKING:
     from Windows.addStationWindow import AddStationWindow
@@ -28,14 +29,14 @@ class AddStationLayout(QWidget):
         self.vBox.addLayout(self.hBox)
 
     def widget_filling(self) -> None:
-        self.label_Name_Station: QLabel = QLabel("")
-        self.label_Link_Station: QLabel = QLabel("")
+        self.label_Name_Station: QLabel = QLabel(getStr("NameStation"))
+        self.label_Link_Station: QLabel = QLabel(getStr("LinkStation"))
 
         self.lineNameStation: QLineEdit = QLineEdit()
         self.lineLinkStation: QLineEdit = QLineEdit()
 
-        self.btn_Save: QPushButton = QPushButton("Save")
-        self.btn_Cancel: QPushButton = QPushButton("Cancel")
+        self.btn_Save: QPushButton = QPushButton(getStr("Cancel"))
+        self.btn_Cancel: QPushButton = QPushButton(getStr("Save"))
 
         self.vBox: QVBoxLayout = QVBoxLayout()
         self.hBox: QHBoxLayout = QHBoxLayout()

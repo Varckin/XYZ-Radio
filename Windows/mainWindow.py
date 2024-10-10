@@ -2,9 +2,9 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QApplication, QSystemTrayIcon,
 from PyQt5.QtGui import QIcon, QScreen, QCloseEvent, QCursor
 from PyQt5.QtCore import QEvent, QPoint, QRect
 from pathlib import Path
+from Localization.getStrLocal import getStr
 
 from Widgets.mainWindowWidget import MainLayouts
-
 from Windows.aboutWindow import AboutWindow
 from Windows.addStationWindow import AddStationWindow
 
@@ -13,14 +13,13 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.logo: str = f"{str(Path.cwd())}/Resource/logo.png"
-        self.systemTray: QSystemTrayIcon = QSystemTrayIcon()
+        self.systemTray: SystemTray = SystemTray(window=self)
         self.centralWidget: QWidget = QWidget()
         self.mainLayout: MainLayouts = MainLayouts()
         self.aboutWindow: AboutWindow = AboutWindow()
         self.addStationWindow: AddStationWindow = AddStationWindow(mainLayouts=self.mainLayout)
 
         self.setupWindow()
-        self.setupTray()
         self.activity()
 
     def centerWindow(self) -> None:
@@ -34,11 +33,9 @@ class MainWindow(QMainWindow):
         self.centralWidget.setLayout(self.mainLayout.mainGridLayout)
         self.setCentralWidget(self.centralWidget)
 
-        self.systemTray.setIcon(QIcon(self.logo))
-
         self.centerWindow()
         self.setFixedSize(460, 140)
-        self.setWindowTitle("XYZ RADIO")
+        self.setWindowTitle(getStr("NameApp"))
         self.setWindowIcon(QIcon(self.logo))
 
     def activity(self) -> None:
@@ -64,20 +61,29 @@ class MainWindow(QMainWindow):
         if event.type() == QEvent.WindowStateChange:
             if self.isMinimized():
                 self.hide()
-                self.systemTray.show()
-                self.systemTray.showMessage("App hide",
-                                            "The application was minimized to tray",
+                self.systemTray.systemTray.show()
+                self.systemTray.systemTray.showMessage(getStr("AppHide"),
+                                            getStr("MessageHide"),
                                             QSystemTrayIcon.Information,
                                             2000)
+
+
+class SystemTray:
+    def __init__(self, window: MainWindow):
+        self.window: MainWindow = window
+        self.systemTray: QSystemTrayIcon = QSystemTrayIcon()
+        self.systemTray.setIcon(QIcon(self.window.logo))
+
+        self.setupTray()
 
     def setupTray(self) -> None:
         self.trayMenu: QMenu = QMenu()
 
-        restore: QAction = QAction("Open App", self)
-        restore.triggered.connect(self.show)
+        restore: QAction = QAction(getStr("OpenApp"), self.window)
+        restore.triggered.connect(self.activatedForegroundWindow)
         self.trayMenu.addAction(restore)
 
-        quit: QAction = QAction("Exit", self)
+        quit: QAction = QAction(getStr("Quit"), self.window)
         quit.triggered.connect(QApplication.quit)
         self.trayMenu.addAction(quit)
 
@@ -88,4 +94,8 @@ class MainWindow(QMainWindow):
         if reason == QSystemTrayIcon.Context:
             self.trayMenu.exec_(QCursor.pos())
         if reason == QSystemTrayIcon.DoubleClick:
-            self.show()
+            self.activatedForegroundWindow()
+
+    def activatedForegroundWindow(self) -> None:
+        self.window.showNormal()
+        self.window.activateWindow()

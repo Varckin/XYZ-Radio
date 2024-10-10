@@ -5,7 +5,7 @@ from time import sleep
 from datetime import datetime
 from pathlib import Path
 
-from URLValidator.URLValidator import isURLValid
+from URLValidator.URLValidator import isURLValid, checkFolder
 
 
 if TYPE_CHECKING:
@@ -46,6 +46,8 @@ class GetData(QThread):
         super().__init__()
         self.player: VlcPlayer = player
         self.widget: MainLayouts = widget
+        self.folderPath: str = f"{str(Path.cwd())}/SavedTracks"
+        checkFolder(self.folderPath)
 
     def run(self) -> None:
         musicName: str = ""
@@ -59,5 +61,5 @@ class GetData(QThread):
                 self.widget.label_NameMusic.setText(metaData)
 
                 name_file = self.widget.comboBox_Name_Station.currentText()
-                with open(f"{str(Path.cwd())}/SavedTracks/{name_file}.txt", 'at') as file:
+                with open(f"{self.folderPath}/{name_file}.txt", 'at') as file:
                     file.write(datetime.now().strftime(f"%Y:%m:%d %H:%M:%S - {musicName}\n"))
