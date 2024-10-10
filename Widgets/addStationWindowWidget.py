@@ -35,8 +35,8 @@ class AddStationLayout(QWidget):
         self.lineNameStation: QLineEdit = QLineEdit()
         self.lineLinkStation: QLineEdit = QLineEdit()
 
-        self.btn_Save: QPushButton = QPushButton(getStr("Cancel"))
-        self.btn_Cancel: QPushButton = QPushButton(getStr("Save"))
+        self.btn_Save: QPushButton = QPushButton(getStr("Save"))
+        self.btn_Cancel: QPushButton = QPushButton(getStr("Cancel"))
 
         self.vBox: QVBoxLayout = QVBoxLayout()
         self.hBox: QHBoxLayout = QHBoxLayout()
