@@ -39,8 +39,6 @@ class VlcPlayer():
             self.currentPlayingStation(url=url)
 
 
-
-
 class GetData(QThread):
     def __init__(self, player: 'VlcPlayer', widget: 'MainLayouts') -> None:
         super().__init__()
